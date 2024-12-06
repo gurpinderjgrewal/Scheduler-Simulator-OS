@@ -17,6 +17,7 @@
 #define TOTAL_PARTITIONS 6
 #define FREE -1 // define free space
 #define MAX_PROCESSESS 100
+#define TOTAL_MEMORY 100
 
 typedef struct
 {
@@ -45,6 +46,9 @@ typedef struct
     unsigned int arrival_time;
 
 } PCBandArrival;
+typedef struct{
+    MemoryPartition memory[TOTAL_PARTITIONS];
+}Memory;
 
 typedef struct
 {
