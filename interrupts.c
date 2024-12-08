@@ -4,7 +4,7 @@
  * Jordan Grewal, 101287828
  * Hadi Srour, 101200666
  */
-#include "interrupts.h"
+#include "interrupts__101287828_101200666.h"
 // Global variables
 long int simTime = 0;
 PCB readyQue[MAX_PROCESSESS];
@@ -138,18 +138,16 @@ void printProcess()
     printf("-------------------------------------------------------------------------------------------------\n");
     for (int i = 0; i < number_of_process; i++)
     {
-           printf("%7u | %8u | %12u | %15u | %10u | %13u | %16d\n",
-           newArr[i].pcb.PID,
-           newArr[i].pcb.memory_size,
-           newArr[i].pcb.arrival_time,
-           newArr[i].pcb.CPU_time,
-           newArr[i].pcb.IO_frequency,
-           newArr[i].pcb.IO_duration,
-           newArr[i].pcb.partition_number);
+        printf("%7u | %8u | %12u | %15u | %10u | %13u | %16d\n",
+               newArr[i].pcb.PID,
+               newArr[i].pcb.memory_size,
+               newArr[i].pcb.arrival_time,
+               newArr[i].pcb.CPU_time,
+               newArr[i].pcb.IO_frequency,
+               newArr[i].pcb.IO_duration,
+               newArr[i].pcb.partition_number);
         /* code */
     }
-    
- 
 }
 
 // find function to return the index of process
@@ -216,7 +214,7 @@ int allocate_memory(PCB *process)
     // Case 3:
     if (bestIndex == -1)
     {
-        printf("Cant allocate memory");
+        // printf("Cant allocate memory");
         return 0;
     }
 
@@ -297,7 +295,7 @@ void simulation(PCBandArrival processes[], int counter, FILE *file)
 {
     PCBandArrival temp[MAX_PROCESSESS];
     memcpy(temp, processes, MAX_PROCESSESS * sizeof(PCBandArrival));
-    _Bool cpu_busy = 0; // cpu free
+    int cpu_busy = 0; // cpu free
     int process_count = counter;
     int arrivalSize = 0;
     int t = 0;
@@ -313,7 +311,7 @@ void simulation(PCBandArrival processes[], int counter, FILE *file)
                     readyQue[readyQueSize] = temp[i].pcb;
 
                     // log transition change
-                    printStateChange(readyQue[readyQueSize].PID, "NEW      ---> READY");
+                    // printStateChange(readyQue[readyQueSize].PID, "NEW      ---> READY");
                     log_transition(file, simTime, readyQue[readyQueSize].PID, "NEW", "READY");
 
                     // case 1:
@@ -363,8 +361,8 @@ void simulation(PCBandArrival processes[], int counter, FILE *file)
                     readyQue[i] = readyQue[i + 1];
                 }
                 readyQueSize--;
-                //log transition change
-                printStateChange(running.PID, "READY      ---> RUNNING");
+                // log transition change
+                // printStateChange(running.PID, "READY      ---> RUNNING");
                 log_transition(file, simTime, running.PID, "READY", "RUNNING");
 
                 cpu_busy = 1;
@@ -387,7 +385,7 @@ void simulation(PCBandArrival processes[], int counter, FILE *file)
                 metrics[index_of_pid].meanWaitTime = metrics[index_of_pid].waitingTime / metrics[index_of_pid].burstTime;
 
                 // log transition change
-                printStateChange(running.PID, "RUNNING      ---> TERMINATE");
+                // printStateChange(running.PID, "RUNNING      ---> TERMINATE");
                 log_transition(file, simTime, running.PID, "RUNNING", "TERMINATE");
                 t = findMetric(running.PID);
 
@@ -408,8 +406,8 @@ void simulation(PCBandArrival processes[], int counter, FILE *file)
                 index_of_pid = findMetric(running.PID);
                 metrics[index_of_pid].burstTime++;
 
-                //log transition change
-                printStateChange(running.PID, "RUNNING      ---> WAITING");
+                // log transition change
+                // printStateChange(running.PID, "RUNNING      ---> WAITING");
                 log_transition(file, simTime, running.PID, "RUNNING", "WAITING");
                 running.remaining_IO_frequency = running.IO_frequency;
                 waitingQue[waitingQueSize] = running;
@@ -427,7 +425,7 @@ void simulation(PCBandArrival processes[], int counter, FILE *file)
                 waitingQue[i].remaining_IO_duration = waitingQue[i].IO_duration;
                 readyQue[readyQueSize] = waitingQue[i];
                 readyQueSize++;
-                printStateChange(waitingQue[i].PID, "WAITING      ---> READY");
+                // printStateChange(waitingQue[i].PID, "WAITING      ---> READY");
                 log_transition(file, simTime, waitingQue[i].PID, "WAITING", "READY");
 
                 // case 1: i is at start or middle
@@ -452,15 +450,14 @@ void simulation(PCBandArrival processes[], int counter, FILE *file)
         {
             index_of_pid = findMetric(readyQue[i].PID);
             metrics[index_of_pid].waitingTime++;
-            
         }
     }
 }
 
-//Function to create memory_partition.txt file
+// Function to create memory_partition.txt file
 void create_mem_partition_file()
 {
-    file_mem = fopen("memory_partition.txt", "w");
+    file_mem = fopen("memory_status_101287828_101200666.txt", "w");
     // Print table header to the file
     fprintf(file_mem, "+--------------------------------------------------------------------------------------------------+\n");
     fprintf(file_mem, "| Time of Event | Memory Used | Partitions State          | Total Free Memory | Usable Free Memory |\n");
@@ -468,8 +465,6 @@ void create_mem_partition_file()
 
     fprintf(file_mem, "| %-13d | %-11d | %-25s | %-18d | %-18d |\n",
             0, 0, result, total_free_memory, useable_free_memory);
-
-
 }
 
 // Function to create execution.txt file
@@ -499,7 +494,6 @@ void printFinalStat(double wait_time, double tnt_time)
     {
         wait_time += metrics[i].waitingTime;
         tnt_time += metrics[i].turnaroundTime;
-
     }
     wait_time = wait_time / number_of_process;
     tnt_time = tnt_time / number_of_process;
@@ -508,36 +502,66 @@ void printFinalStat(double wait_time, double tnt_time)
            wait_time, tnt_time, (100 / tnt_time));
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-    _Bool no_process_left = 0;
-    _Bool cpu_busy = 0;
+    int no_process_left = 0;
+    int cpu_busy = 0;
     double avrg_wait_time = 0.0;
     double avrg_tnt_time = 0.0;
-    // PCBandArrival *temp = newArr;
+    const char *filename = argv[1];
+    const char *scheduler = argv[2];
+
+    srand(time(NULL));
+    if (argc < 3)
+    {
+        // check for incorrect usage of argv
+        fprintf(stderr, "Usage: %s <filename>\n", argv[0]);
+        return 1;
+    }
+
+    // const char *filename = argv[1];
+    int number1 = -1;
+
+    // Validate scheduler parameter
+    if (strcmp(scheduler, "FCFS") != 0 && strcmp(scheduler, "RR") != 0 && strcmp(scheduler, "SJF") != 0)
+    {
+        fprintf(stderr, "Invalid scheduler type. Supported schedulers are: FCFS, RR, SJF\n");
+        return 1;
+    }
+    // extracts the number from provided filename in argv
+    if (strncmp(filename, "input_data_", 11) == 0 && strcmp(filename + strlen(filename) - 4, ".txt") == 0)
+    {
+        number1 = atoi(filename + 11); // stores number from filename as integer
+    }
+
+    if (number1 == -1)
+    {
+        // checks for incorrect filename format
+        fprintf(stderr, "Invalid filename format. Expected format: trace<number>.txt\n");
+        return 1;
+    }
+
+  
+
+    PCBandArrival *temp = newArr;
     initMemory();
-    printMemory();
+   
     // first come first serve
     arrayToString(values, TOTAL_PARTITIONS, result, sizeof(result));
     // load all process from .txt file into newArr array
-    number_of_process = read_input_data("input_data_2.txt");
+    number_of_process = read_input_data(filename);
     initMetrics();
-    printProcess();
-    printf("\n+-----------------------------------------------------------------+\n");
-    printf("------------------- Start of simulation ---------------------------\n");
-    printf("+-----------------------------------------------------------------+\n");
-    create_mem_partition_file();
-    create_execution_file("execution.txt", newArr, number_of_process);
 
-    printf("+-----------------------------------------------------------------+\n");
-    printf("--------------------- Simulation Over -----------------------------\n");
-    printMemory();
+    if (strcmp(scheduler, "FCFS") == 0)
+    {
+        create_mem_partition_file();
+        create_execution_file("execution_101287828_101200666.txt", newArr, number_of_process);
+        printf("+-----------------------------------------------------------------+\n");
+        printf("\n------------------- Printing of Metrics ---------------------------\n");
+        printMetrics();
+        printf("\n------------------------ Final Stats -----------------------------\n");
+        printFinalStat(avrg_wait_time, avrg_tnt_time);
+    }
 
-    printf("+-----------------------------------------------------------------+\n");
-    printf("\n------------------- Printing of Metrics ---------------------------\n");
-    printMetrics();
-    printf("\n------------------------ Final Stats -----------------------------\n");
-    printFinalStat(avrg_wait_time, avrg_tnt_time);
-
-    return 1;
+    return 0;
 }

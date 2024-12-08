@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# Compile the C++ source file
+g++ interrupts.c -I ./ -o sim
+
+# Check if compilation succeeded
+if [ $? -ne 0 ]; then
+    echo "Compilation failed. Please check your code."
+    exit 1
+fi
+
+# Execute the compiled program with the first test case
+./sim input_data_2.txt FCFS
